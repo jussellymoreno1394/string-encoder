@@ -2,209 +2,238 @@ package encoder;
 
 import java.math.BigInteger;
 import java.util.Base64;
-
 import javax.swing.JOptionPane;
 
 /**
- * @author jussellymoreno
- * 
- * @version 1.0
- */
+* String encoder.
+* 
+* @author jussellymoreno
+* 
+* @version 1.0
+*/
 public class StringEncoder {
 
-	/**
-	 * String to Base64 converter.
-	 * 
-	 * @param string String to encode.
-	 * @return encoded Encoded string to Base64.
-	 */
-	public String stringToBase64(String string) {
+  /**
+  * String to Base64 converter.
+  * 
+  * @param string String to encode.
+  * 
+  * @return Base64 string.
+  */
+  public String stringToBase64(String string) {
 
-		String encoded = Base64.getEncoder().encodeToString(string.getBytes());
+    return Base64.getEncoder().encodeToString(string.getBytes());
 
-		return encoded;
+  }
 
-	}
+  /**
+  * String to Rot13 converter.
+  * 
+  * @param string String to encode.
+  * 
+  * @return encoded Encoded string to Rot13.
+  */
+  public String stringToRot13(String string) {
 
-	/**
-	 * String to Rot13 converter.
-	 * 
-	 * @param string String to encode.
-	 * @return encoded Encoded string to Rot13.
-	 */
-	public String stringToRot13(String string) {
+    StringBuilder encoded = new StringBuilder();
 
-		StringBuilder encoded = new StringBuilder();
+    for (int i = 0; i < string.length(); i++) {
 
-		for (int i = 0; i < string.length(); i++) {
+      char character = string.charAt(i);
 
-			char character = string.charAt(i);
+      if ((string.codePointAt(i) > 90 && string.codePointAt(i) < 97) || string.codePointAt(i) < 65
+          || string.codePointAt(i) > 122) {
 
-			if ((string.codePointAt(i) > 90 && string.codePointAt(i) < 97) || string.codePointAt(i) < 65
-					|| string.codePointAt(i) > 122) {
+        character = string.charAt(i);
 
-				character = string.charAt(i);
+      } else if (string.codePointAt(i) > 109 || (string.codePointAt(i) > 77 
+              && string.codePointAt(i) <= 90)) {
 
-			} else if (string.codePointAt(i) > 109 || (string.codePointAt(i) > 77 && string.codePointAt(i) <= 90)) {
+        character -= 13;
 
-				character -= 13;
+      } else {
 
-			} else {
+        character += 13;
 
-				character += 13;
+      }
 
-			}
+      encoded.append(character);
 
-			encoded.append(character);
+    }
 
-		}
+    return encoded.toString();
 
-		return encoded.toString();
+  }
 
-	}
+  /**
+  * String to Hexadecimal converter.
+  * 
+  * @param string String to encode.
+  * 
+  * @return Hexadecimal string.
+  */
+  public String stringToHexadecimal(String string) {
 
-	/**
-	 * String to Hexadecimal converter.
-	 * 
-	 * @param string String to encode.
-	 * @return encoded Encoded string to Hexadecimal.
-	 */
-	public String stringToHexadecimal(String string) {
+    return String.format("%03x", new BigInteger(1, string.getBytes()));
 
-		String encoded = String.format("%03x", new BigInteger(1, string.getBytes()));
+  }
 
-		return encoded;
+  /**
+  * String to Binary converter.
+  * 
+  * @param string String to encode.
+  * 
+  * @return encoded Binary string.
+  */
+  public String stringToBinary(String string) {
 
-	}
+    String encoded = " ";
 
-	/**
-	 * String to Binary converter.
-	 * 
-	 * @param string String to encode.
-	 * @return encoded Encoded string to Binary.
-	 */
-	public String stringToBinary(String string) {
+    for (int i = 0; i < string.length(); i++) {
 
-		String encoded = " ";
+      encoded += String.format("%8s", Integer.toBinaryString(string.charAt(i))).replace(' ', '0');
 
-		for (int i = 0; i < string.length(); i++) {
+    }
 
-			encoded += String.format("%8s", Integer.toBinaryString(string.charAt(i))).replace(' ', '0');
+    return encoded;
 
-		}
+  }
 
-		return encoded;
+  /**
+  * Encoding options.
+  * 
+  * @param option Encoding option.
+  * 
+  * @param string String to encode.
+  * 
+  * @return encodedString encoding result.
+  */
+  public String stringEncodingOpt(Integer option, String string) {
 
-	}
+    String encodedString = null;
 
-	/**
-	 * String encoding options.
-	 * 
-	 * @param option Encoding option.
-	 * @param string String to encode.
-	 * @return encodedString - encoding result.
-	 */
-	public String stringEncodingOpt(Integer option, String string) {
+    switch (option) {
 
-		String encodedString = null;
+      case 0:
 
-		switch (option) {
+        encodedString = stringToBase64(string);
+        break;
 
-		case 0:
-			
-			encodedString = stringToBase64(string);
-			break;
-			
-		case 1:
-			
-			encodedString = stringToRot13(string);
-			break;
-			
-		case 2:
-			
-			encodedString = stringToHexadecimal(string);
-			break;
-			
-		case 3:
-			
-			encodedString = stringToBinary(string);
-			break;
+      case 1:
 
-		}
+        encodedString = stringToRot13(string);
+        break;
 
-		return encodedString;
+      case 2:
 
-	}
+        encodedString = stringToHexadecimal(string);
+        break;
 
-	public String inputHandler() {
+      case 3:
 
-		Integer option = null;
+        encodedString = stringToBinary(string);
+        break;
 
-		boolean isNumeric, isValidOpt = false;
+    }
 
-		String string, optStr;
+    return encodedString;
 
-		do {
+  }
 
-			optStr = JOptionPane.showInputDialog(null,
-					"Enter your encoding choice: \n\n0) Base64 " + "\n1) ROT13 \n2) Hexadecimal \n3) Binary \n\n");
+  /**
+  * Input handler.
+  * 
+  * @return Encoded result.
+  */
+  public String inputHandler() {
 
-			isNumeric = isNumericValue(optStr);
+    Integer option = null;
 
-			if (isNumeric == true) {
+    boolean isNumeric;
+    boolean isValidOpt = false;
 
-				option = Integer.parseInt(optStr);
+    String string;
+    String optStr;
 
-				if (option < 0 || option > 3) {
+    do {
 
-					JOptionPane.showMessageDialog(null, "Non existen option. Try again.");
-					
-				} else {
-					
-					isValidOpt = true;
-					
-				}
+      optStr = JOptionPane.showInputDialog(null,
+        "Enter your encoding choice: \n\n0) Base64 "
+      + "\n1) ROT13 \n2) Hexadecimal \n3) Binary \n\n");
 
-			}
+      if (null == optStr) {
 
-		} while (!isNumeric || !isValidOpt);
+        System.exit(0);
 
-		do {
-			string = JOptionPane.showInputDialog(null, "Enter the string you want to encode.");
+      }
 
-			if (string.isEmpty()) {
+      isNumeric = isNumericValue(optStr);
 
-				JOptionPane.showMessageDialog(null, "You must enter at least one character to encode. Try again.");
+      if (isNumeric == true) {
 
-			}
+        option = Integer.parseInt(optStr);
 
-		} while (string.isEmpty());
+        if (option < 0 || option > 3) {
 
-		return stringEncodingOpt(option, string);
+          JOptionPane.showMessageDialog(null, "Non existen option. Try again.");
 
-	}
+        } else {
 
-	public boolean isNumericValue(String numero) {
+          isValidOpt = true;
 
-		try {
-			
-			Integer.parseInt(numero);
-			
-			return true;
-			
-		} catch (NumberFormatException e) {
-			
-			return false;
+        }
 
-		}
-	}
+      }
 
-	public static void main(String[] args) {
+    } while (!isNumeric || !isValidOpt);
 
-		StringEncoder strEncoder = new StringEncoder();
+    do {
 
-		JOptionPane.showMessageDialog(null, "Encode Result:\n" + strEncoder.inputHandler());
+      string = JOptionPane.showInputDialog(null, "Enter the string you want to encode.");
 
-	}
+      if (string.isEmpty()) {
+
+        JOptionPane.showMessageDialog(null, "You must enter at least "
+            + "one character to encode. Try again.");
+
+      }
+
+    } while (string.isEmpty());
+
+    return stringEncodingOpt(option, string);
+
+  }
+
+  /**
+  * Valid if it is a numeric entry.
+  * 
+  * @param input Option to validate.
+  * 
+  * @return boolean.
+  */
+  public boolean isNumericValue(String input) {
+
+    try {
+
+      Integer.parseInt(input);
+
+      return true;
+
+    } catch (NumberFormatException e) {
+
+      return false;
+
+    }
+
+  }
+
+
+  public static void main(String[] args) {
+
+    StringEncoder strEncoder = new StringEncoder();
+
+    JOptionPane.showMessageDialog(null, "Encode Result:\n" + strEncoder.inputHandler());
+
+  }
 
 }
